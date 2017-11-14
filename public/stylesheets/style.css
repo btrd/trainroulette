@@ -12,7 +12,8 @@ html {
   color: #292929;
   font-family: Arial; }
 
-h1 {
+#content {
+  display: none;
   min-height: 85px; }
 
 form input {
