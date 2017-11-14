@@ -30,13 +30,17 @@ post '/next_travel' do
     end.first
   end
 
+  def currentTime
+    Time.now.localtime("+01:00")
+  end
+
   originStation = searchClosestStation([params[:lat], params[:lon]], stations)
 
   next_travel = travels
     .select do |t|
-      t['originStationId'] == originStation['id'] && t['odHP'] == '1' && Time.now < Time.parse(t['startTime'])
+      t['originStationId'] == originStation['id'] && t['odHP'] == '1' && currentTime < Time.parse(t['startTime'])
     end
-    .sort_by { |t| [Time.parse(t['startTime']), Time.now - Time.parse(t['endTime'])] }
+    .sort_by { |t| [Time.parse(t['startTime']), currentTime - Time.parse(t['endTime'])] }
     .first
 
   timeDeparture = DateTime.parse("#{next_travel['date']} #{next_travel['startTime']}")
