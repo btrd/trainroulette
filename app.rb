@@ -31,7 +31,7 @@ post '/next_travel' do
   end
 
   def currentTime
-    Time.now.localtime("+01:00")
+    Time.now.utc.localtime("+01:00")
   end
 
   originStation = searchClosestStation([params[:lat], params[:lon]], stations)
