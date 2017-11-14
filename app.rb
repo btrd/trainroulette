@@ -6,6 +6,14 @@ require 'sinatra'
 require "sinatra/reloader" if development?
 
 get '/' do
+  erb :index
+end
+
+post '/get_coordinates' do
+  Geocoder.coordinates(params[:place]).to_json
+end
+
+post '/next_travel' do
   res = Net::HTTP.get('carte-tgvmax.sncf.com', "/stations.json")
   stations = JSON.parse(res)['features']
 
@@ -21,8 +29,7 @@ get '/' do
     end.first
   end
 
-  coordinates = Geocoder.coordinates('Paris')
-  originStation = searchClosestStation(coordinates, stations)
+  originStation = searchClosestStation([params[:lat], params[:lon]], stations)
 
   next_travel = travels.select { |t| t['originStationId'] == originStation['id'] && t['odHP'] == '1' }.sort_by { |t| [Time.parse(t['startTime']), Time.now - Time.parse(t['endTime'])] }.first
 

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <p id="demo">Réception de la localisation... </p>
+  <form id="form_place" action='/get_coordinates' method="post">
+    <input type='text' id="place" name='place'/>
+    <input type='submit' name='submit' value='Changer de gare de départ' />
+  </form>
+
+
+  <script>
+    getLocation();
+    var x = document.getElementById("demo");
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+      } else {
+        x.innerHTML = "La localisation n'est pas supporté par ce navigateur.";
+      }
+    }
+
+    function showPosition(position) {
+      lat = position.coords.latitude;
+      lon = position.coords.longitude;
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("demo").innerHTML = this.responseText;
+        }
+      };
+      xhttp.open("POST", "next_travel", true);
+      xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhttp.send("lat="+lat+"&lon="+lon);
+    }
+
+    function showError(error) {
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          x.innerHTML = "La localisation a été refusée"
+          break;
+        case error.POSITION_UNAVAILABLE:
+          x.innerHTML = "La localisation n'est pas disponible."
+          break;
+        case error.TIMEOUT:
+          x.innerHTML = "La demande de localisation a expiré."
+          break;
+        case error.UNKNOWN_ERROR:
+          x.innerHTML = "Une erreur inconnue est survenue."
+          break;
+      }
+    }
+
+    document.getElementById("form_place").onsubmit = function() {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          var coords = JSON.parse(this.responseText);
+          showPosition({
+            coords: {
+              latitude: coords[0],
+              longitude: coords[1]
+            }
+          });
+        }
+      };
+      xhttp.open("POST", "get_coordinates", true);
+      xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhttp.send("place=" + document.getElementById("place").value);
+      return false;
+    }
+  </script>
+</body>
+</html>
