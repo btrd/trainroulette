@@ -43,10 +43,14 @@ post '/next_travel' do
     .sort_by { |t| [Time.parse(t['startTime']), currentTime - Time.parse(t['endTime'])] }
     .first
 
-  timeDeparture = DateTime.parse("#{next_travel['date']} #{next_travel['startTime']}")
+  if next_travel.nil?
+    "Plus de train libre aujourd'hui 😞"
+  else
+    timeDeparture = DateTime.parse("#{next_travel['date']} #{next_travel['startTime']}")
 
-  stationDeparture   = stations.find { |s| s['id'] == next_travel['originStationId'] }
-  stationDestination = stations.find { |s| s['id'] == next_travel['destinationStationId'] }
+    stationDeparture   = stations.find { |s| s['id'] == next_travel['originStationId'] }
+    stationDestination = stations.find { |s| s['id'] == next_travel['destinationStationId'] }
 
-  "Prochain train depuis #{stationDeparture['name']} pour #{stationDestination['name']}, départ aujourd'hui à #{timeDeparture.strftime("%H:%M")}"
+    "Prochain train depuis #{stationDeparture['name']} pour #{stationDestination['name']}, départ aujourd'hui à #{timeDeparture.strftime("%H:%M")}"
+  end
 end
