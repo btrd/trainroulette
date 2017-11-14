@@ -3,11 +3,14 @@ require 'json'
 require 'time'
 require 'geocoder'
 require 'sinatra'
-require "sinatra/reloader" if development?
 require 'slim'
 
+if development?
+  require 'sinatra/reloader'
+  require 'pry'
+end
+
 before do
-  # redirect request.url.sub('http', 'https') unless request.secure? || settings.development?
   if settings.production? && request.scheme == 'http'
     headers['Location'] = request.url.sub('http', 'https')
     halt 301, "https required\n"
