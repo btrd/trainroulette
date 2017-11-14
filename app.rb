@@ -4,9 +4,10 @@ require 'time'
 require 'geocoder'
 require 'sinatra'
 require "sinatra/reloader" if development?
+require 'slim'
 
 get '/' do
-  erb :index
+  slim :index
 end
 
 post '/get_coordinates' do

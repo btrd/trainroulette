@@ -1,0 +1,71 @@
+doctype html
+html
+  head
+    title Trainroulette
+    link rel="stylesheet" type="text/css" href="./stylesheets/style.css"
+  body
+    p#demo Réception de la localisation...
+    form#form_place action="/get_coordinates" method="post" 
+      input#place name="place" type="text" /
+      input name="submit" type="submit" value=("Changer de gare de départ") /
+    javascript:
+      getLocation();
+      var x = document.getElementById("demo");
+
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+          x.innerHTML = "La localisation n'est pas support&#xE9; par ce navigateur.";
+        }
+      }
+
+      function showPosition(position) {
+        lat = position.coords.latitude;
+        lon = position.coords.longitude;
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("demo").innerHTML = this.responseText;
+          }
+        };
+        xhttp.open("POST", "next_travel", true);
+        xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhttp.send("lat="+lat+"&lon="+lon);
+      }
+
+      function showError(error) {
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            x.innerHTML = "La localisation a &#xE9;t&#xE9; refus&#xE9;e"
+            break;
+          case error.POSITION_UNAVAILABLE:
+            x.innerHTML = "La localisation n'est pas disponible."
+            break;
+          case error.TIMEOUT:
+            x.innerHTML = "La demande de localisation a expir&#xE9;."
+            break;
+          case error.UNKNOWN_ERROR:
+            x.innerHTML = "Une erreur inconnue est survenue."
+            break;
+        }
+      }
+
+      document.getElementById("form_place").onsubmit = function() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            var coords = JSON.parse(this.responseText);
+            showPosition({
+              coords: {
+                latitude: coords[0],
+                longitude: coords[1]
+              }
+            });
+          }
+        };
+        xhttp.open("POST", "get_coordinates", true);
+        xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhttp.send("place=" + document.getElementById("place").value);
+        return false;
+      }
