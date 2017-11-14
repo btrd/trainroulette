@@ -2,4 +2,24 @@ html {
   background: url(/images/back.jpg) no-repeat center fixed;
   background-size: cover; }
 
+.overlay {
+  background: rgba(0, 0, 0, 0.5);
+  width: 800px;
+  margin: auto;
+  padding: 30px;
+  margin-top: 10%;
+  text-align: center;
+  color: white;
+  font-family: Arial; }
+
+form input {
+  width: 240px;
+  background: #ccc;
+  border: none;
+  padding: 5px;
+  font-size: 17px;
+  border: 2px solid white; }
+form #place {
+  border-right: none; }
+
 /*# sourceMappingURL=style.css.map */

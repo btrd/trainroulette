@@ -4,13 +4,14 @@ html
     title Trainroulette
     link rel="stylesheet" type="text/css" href="./stylesheets/style.css"
   body
-    p#demo Réception de la localisation...
-    form#form_place action="/get_coordinates" method="post" 
-      input#place name="place" type="text" /
-      input name="submit" type="submit" value=("Changer de gare de départ") /
+    .overlay
+      h1#content Réception de la localisation en cours
+      form#form_place action="/get_coordinates" method="post"
+        input#place name="place" type="text"
+        input name="submit" type="submit" value="Changer de gare de départ"
     javascript:
       getLocation();
-      var x = document.getElementById("demo");
+      var x = document.getElementById("content");
 
       function getLocation() {
         if (navigator.geolocation) {
@@ -26,7 +27,7 @@ html
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("demo").innerHTML = this.responseText;
+            document.getElementById("content").innerHTML = this.responseText;
           }
         };
         xhttp.open("POST", "next_travel", true);
