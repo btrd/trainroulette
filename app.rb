@@ -33,35 +33,64 @@ post '/next_travel' do
   res = Net::HTTP.get('carte-tgvmax.sncf.com', "/travels/#{today.strftime("%d-%m-%Y")}.json")
   travels = JSON.parse(res)
 
-  def searchClosestStation(originCoord, stations)
-    userPlace = [originCoord[0], originCoord[1]]
-    stations.sort_by do |s|
-      stationPlace = [s['geometry']['coordinates'][1], s['geometry']['coordinates'][0]]
-      Geocoder::Calculations.distance_between(userPlace, stationPlace)
-    end.first
-  end
-
-  def currentTime
-    Time.now.utc.localtime("+01:00")
-  end
-
   originStation = searchClosestStation([params[:lat], params[:lon]], stations)
 
-  next_travel = travels
+  next_travels = travels
     .select do |t|
       t['originStationId'] == originStation['id'] && t['odHP'] == '1' && currentTime < Time.parse(t['startTime'])
     end
     .sort_by { |t| [Time.parse(t['startTime']), currentTime - Time.parse(t['endTime'])] }
-    .first
 
-  if next_travel.nil?
+  if next_travels.empty?
     "Plus de train libre aujourd'hui 😞"
   else
-    timeDeparture = DateTime.parse("#{next_travel['date']} #{next_travel['startTime']}")
+    #"Prochain train depuis #{stationDeparture['name']} à destination de #{stationDestination['name']}, départ aujourd'hui à #{timeDeparture.strftime("%H:%M")}"
+    formatTravels(next_travels, stations).to_json
+  end
+end
 
-    stationDeparture   = stations.find { |s| s['id'] == next_travel['originStationId'] }
-    stationDestination = stations.find { |s| s['id'] == next_travel['destinationStationId'] }
+private
+def searchClosestStation(originCoord, stations)
+  userPlace = [originCoord[0], originCoord[1]]
+  stations.sort_by do |s|
+    stationPlace = [s['geometry']['coordinates'][1], s['geometry']['coordinates'][0]]
+    Geocoder::Calculations.distance_between(userPlace, stationPlace)
+  end.first
+end
 
-    "Prochain train depuis #{stationDeparture['name']} à destination de #{stationDestination['name']}, départ aujourd'hui à #{timeDeparture.strftime("%H:%M")}"
+def currentTime
+  Time.now.utc.localtime("+01:00")
+end
+
+def formatTravels(travels, stations)
+  travels.map do |travel|
+    timeDeparture = DateTime.parse("#{travel['date']} #{travel['startTime']}")
+
+    originStation      = searchStation(travel['originStationId'], travel['originAsText'], stations)
+    destinationStation = searchStation(travel['destinationStationId'], travel['destinationAsText'], stations)
+    {
+      datetime: timeDeparture,
+      originStation: {
+        id: originStation['id'],
+        name: originStation['name']
+      },
+      destinationStation: {
+        id: destinationStation['id'],
+        name: destinationStation['name']
+      }
+    }
+  end
+end
+
+# Certains stations aren't in the file stations.json
+def searchStation(station_id, station_text, stations)
+  station = stations.find { |s| s['id'] == station_id }
+  if station.nil?
+    {
+      'id' => station_id,
+      'name' => station_text
+    }
+  else
+    station
   end
 end
