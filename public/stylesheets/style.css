@@ -3,25 +3,35 @@ html {
   background-size: cover; }
 
 .overlay {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.3);
   width: 800px;
   margin: auto;
   padding: 30px;
-  margin-top: 10%;
+  margin-top: 7%;
   text-align: center;
-  color: white;
+  color: #292929;
   font-family: Arial; }
+
+h1 {
+  min-height: 85px; }
 
 form input {
   background: #ccc;
   border: none;
   padding: 10px;
   font-size: 17px;
-  border: 2px solid white; }
+  border: 2px solid #292929; }
 form #place {
   width: 240px;
   border-right: none; }
 form input[type="submit"] {
-  width: 150px; }
+  width: 150px;
+  text-indent: 0;
+  transition: 150ms linear; }
+  form input[type="submit"]:hover {
+    text-indent: 15px;
+    background: #292929;
+    color: lightgrey;
+    cursor: pointer; }
 
 /*# sourceMappingURL=style.css.map */

@@ -5,10 +5,16 @@ html
     link rel="stylesheet" type="text/css" href="./stylesheets/style.css"
   body
     .overlay
-      h1#content Réception de la localisation en cours
+      img src="./images/logo.png"
+      h1
+        span#content
+        svg#loader xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="64px" height="64px" viewBox="0 0 128 128" xml:space="preserve"
+          g
+            path d="M75.4 126.63a11.43 11.43 0 0 1-2.1-22.65 40.9 40.9 0 0 0 30.5-30.6 11.4 11.4 0 1 1 22.27 4.87h.02a63.77 63.77 0 0 1-47.8 48.05v-.02a11.38 11.38 0 0 1-2.93.37z" fill="#ec6862"
+            animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="1200ms" repeatCount="indefinite"
       form#form_place action="/get_coordinates" method="post"
         input#place name="place" type="text" placeholder="Gare de départ"
-        input name="submit" type="submit" value="Partir →"
+        input name="submit" type="submit" value="Changer →"
     javascript:
       getLocation();
       var x = document.getElementById("content");
@@ -17,7 +23,7 @@ html
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(showPosition, showError);
         } else {
-          x.innerHTML = "La localisation n'est pas support&#xE9; par ce navigateur.";
+          x.innerHTML = "La localisation n'est pas supporté par ce navigateur.";
         }
       }
 
@@ -27,6 +33,7 @@ html
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) {
+            hideLoader();
             document.getElementById("content").innerHTML = this.responseText;
           }
         };
@@ -53,6 +60,7 @@ html
       }
 
       document.getElementById("form_place").onsubmit = function() {
+        showLoader();
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) {
@@ -69,4 +77,11 @@ html
         xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhttp.send("place=" + document.getElementById("place").value);
         return false;
+      }
+      function showLoader() {
+        document.getElementById("content").innerHTML = '';
+        document.getElementById("loader").style.display = '';
+      }
+      function hideLoader() {
+        document.getElementById("loader").style.display = 'none';
       }

@@ -51,6 +51,6 @@ post '/next_travel' do
     stationDeparture   = stations.find { |s| s['id'] == next_travel['originStationId'] }
     stationDestination = stations.find { |s| s['id'] == next_travel['destinationStationId'] }
 
-    "Prochain train depuis #{stationDeparture['name']} pour #{stationDestination['name']}, départ aujourd'hui à #{timeDeparture.strftime("%H:%M")}"
+    "Prochain train depuis #{stationDeparture['name']} à destination de #{stationDestination['name']}, départ aujourd'hui à #{timeDeparture.strftime("%H:%M")}"
   end
 end
