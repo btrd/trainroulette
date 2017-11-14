@@ -23,7 +23,7 @@ post '/next_travel' do
 
   def searchClosestStation(originCoord, stations)
     userPlace = [originCoord[0], originCoord[1]]
-    srtSta = stations.sort_by do |s|
+    stations.sort_by do |s|
       stationPlace = [s['geometry']['coordinates'][1], s['geometry']['coordinates'][0]]
       Geocoder::Calculations.distance_between(userPlace, stationPlace)
     end.first
@@ -31,7 +31,12 @@ post '/next_travel' do
 
   originStation = searchClosestStation([params[:lat], params[:lon]], stations)
 
-  next_travel = travels.select { |t| t['originStationId'] == originStation['id'] && t['odHP'] == '1' }.sort_by { |t| [Time.parse(t['startTime']), Time.now - Time.parse(t['endTime'])] }.first
+  next_travel = travels
+    .select do |t|
+      t['originStationId'] == originStation['id'] && t['odHP'] == '1' && Time.now < Time.parse(t['startTime'])
+    end
+    .sort_by { |t| [Time.parse(t['startTime']), Time.now - Time.parse(t['endTime'])] }
+    .first
 
   timeDeparture = DateTime.parse("#{next_travel['date']} #{next_travel['startTime']}")
 
