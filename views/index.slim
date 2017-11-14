@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title Trainroulette
+    title Trainroulette | Partir maintenant avec TGVmax
     link rel="stylesheet" type="text/css" href="./stylesheets/style.css"
   body
     .overlay
@@ -43,6 +43,7 @@ html
       }
 
       function showError(error) {
+        hideLoader();
         switch(error.code) {
           case error.PERMISSION_DENIED:
             x.innerHTML = "La localisation a &#xE9;t&#xE9; refus&#xE9;e"
