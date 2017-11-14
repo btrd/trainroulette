@@ -1,6 +1,11 @@
 source 'https://rubygems.org'
-gem 'sinatra'
+
 gem 'geocoder'
 gem 'sass'
+gem 'sinatra'
 gem 'slim'
-gem 'pry', group: :development
+
+group :development do
+  gem 'pry'
+  gem 'rubocop', require: false
+end
