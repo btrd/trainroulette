@@ -13,13 +13,15 @@ html {
   font-family: Arial; }
 
 form input {
-  width: 240px;
   background: #ccc;
   border: none;
-  padding: 5px;
+  padding: 10px;
   font-size: 17px;
   border: 2px solid white; }
 form #place {
+  width: 240px;
   border-right: none; }
+form input[type="submit"] {
+  width: 150px; }
 
 /*# sourceMappingURL=style.css.map */

@@ -7,8 +7,8 @@ html
     .overlay
       h1#content Réception de la localisation en cours
       form#form_place action="/get_coordinates" method="post"
-        input#place name="place" type="text"
-        input name="submit" type="submit" value="Changer de gare de départ"
+        input#place name="place" type="text" placeholder="Gare de départ"
+        input name="submit" type="submit" value="Partir →"
     javascript:
       getLocation();
       var x = document.getElementById("content");
