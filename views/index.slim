@@ -10,6 +10,7 @@ html
         span#content
           span#result
           a#trainlink href="." target="_blank" Partir 🏝
+        span#error
         svg#loader xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="64px" height="64px" viewBox="0 0 128 128" xml:space="preserve"
           g
             path d="M75.4 126.63a11.43 11.43 0 0 1-2.1-22.65 40.9 40.9 0 0 0 30.5-30.6 11.4 11.4 0 1 1 22.27 4.87h.02a63.77 63.77 0 0 1-47.8 48.05v-.02a11.38 11.38 0 0 1-2.93.37z" fill="#ec6862"
@@ -19,13 +20,12 @@ html
         input name="submit" type="submit" value="Changer →"
     javascript:
       getLocation();
-      var x = document.getElementById("result");
 
       function getLocation() {
         if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(showPosition, showError);
+          navigator.geolocation.getCurrentPosition(showPosition, geolocationError);
         } else {
-          x.innerHTML = "La localisation n'est pas supporté par ce navigateur.";
+          showError("La localisation n'est pas supporté par ce navigateur.");
         }
       }
 
@@ -44,20 +44,19 @@ html
         xhttp.send("lat="+lat+"&lon="+lon);
       }
 
-      function showError(error) {
-        hideLoader();
+      function geolocationError(error) {
         switch(error.code) {
           case error.PERMISSION_DENIED:
-            x.innerHTML = "La localisation a &#xE9;t&#xE9; refus&#xE9;e"
+            showError("La localisation a été refusée");
             break;
           case error.POSITION_UNAVAILABLE:
-            x.innerHTML = "La localisation n'est pas disponible."
+            showError("La localisation n'est pas disponible.");
             break;
           case error.TIMEOUT:
-            x.innerHTML = "La demande de localisation a expir&#xE9;."
+            showError("La demande de localisation a expiré.");
             break;
           case error.UNKNOWN_ERROR:
-            x.innerHTML = "Une erreur inconnue est survenue."
+            showError("Une erreur inconnue est survenue.");
             break;
         }
       }
@@ -74,6 +73,8 @@ html
                 longitude: coords[1]
               }
             });
+          } else if(this.readyState == 4 && this.status == 404) {
+            showError("La gare demandée n'existe pas 🤔");
           }
         };
         xhttp.open("POST", "get_coordinates", true);
@@ -85,11 +86,19 @@ html
       function showLoader() {
         document.getElementById("content").style.display = 'none';
         document.getElementById("loader").style.display = 'inline';
+        document.getElementById("error").style.display = 'none';
       }
 
       function hideLoader() {
         document.getElementById("content").style.display = 'block';
         document.getElementById("loader").style.display = 'none';
+      }
+
+      function showError(errorText) {
+        document.getElementById("loader").style.display = 'none';
+        var errorSpan = document.getElementById("error");
+        errorSpan.style.display = 'block';
+        errorSpan.innerHTML = errorText;
       }
 
       function showTravels(travels) {

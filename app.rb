@@ -22,7 +22,12 @@ get '/' do
 end
 
 post '/get_coordinates' do
-  Geocoder.coordinates(params[:place]).to_json
+  coord = Geocoder.coordinates(params[:place])
+  if coord.nil?
+    status 404
+  else
+    coord.to_json
+  end
 end
 
 post '/next_travel' do
