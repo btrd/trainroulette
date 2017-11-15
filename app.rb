@@ -47,7 +47,11 @@ post '/next_travel' do
                  .sort_by { |t| [Time.parse(t['startTime']), current_time - Time.parse(t['endTime'])] }
 
   if next_travels.empty?
-    "Plus de train libre aujourd'hui 😞"
+    status 404
+    {
+      id: origin_station['id'],
+      name: origin_station['name']
+    }.to_json
   else
     format_travels(next_travels, stations).to_json
   end

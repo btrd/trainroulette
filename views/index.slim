@@ -37,6 +37,9 @@ html
           if (this.readyState == 4 && this.status == 200) {
             hideLoader();
             showTravels(JSON.parse(this.responseText));
+          } else if(this.readyState == 4 && this.status == 404) {
+            station = JSON.parse(this.responseText)
+            showError("Plus aucun train libre au départ de " + station.name + " aujourd'hui 😞");
           }
         };
         xhttp.open("POST", "next_travel", true);
